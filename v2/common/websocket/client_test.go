@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/adshao/go-binance/v2/common"
 	"log"
 	"net/http"
 	"testing"
@@ -51,7 +52,12 @@ func (s *clientTestSuite) TestReadWriteSync() {
 			EnableCompression: false,
 		}
 
-		c, _, err := Dialer.Dial("ws://localhost:8080/ws", nil)
+		ctx, cancel := common.NewDailContext()
+		defer func() {
+			cancel()
+		}()
+
+		c, _, err := Dialer.DialContext(ctx, "ws://localhost:8080/ws", nil)
 		if err != nil {
 			return nil, err
 		}

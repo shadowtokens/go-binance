@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"github.com/adshao/go-binance/v2/common"
 	"net/http"
 	"net/url"
 	"time"
@@ -42,7 +43,12 @@ var wsServe = func(cfg *WsConfig, handler WsHandler, errHandler ErrHandler) (don
 		EnableCompression: true,
 	}
 
-	c, _, err := Dialer.Dial(cfg.Endpoint, nil)
+	ctx, cancel := common.NewDailContext()
+	defer func() {
+		cancel()
+	}()
+
+	c, _, err := Dialer.DialContext(ctx, cfg.Endpoint, nil)
 	if err != nil {
 		return nil, nil, err
 	}
